@@ -1,29 +1,100 @@
 <?php
 // --- CONFIGURAÇÕES E BANCO DE DADOS ---
 
-// O "Banco de Dados" com os endereços. Use \n para quebrar a linha.
-$enderecos = [
-    'uno' => "Av. Pontes Vieira, 2340\nUNO | Medical & Office\nSala 915 - Dionísio Torres, Fortaleza-CE",
-    'co'  => "R. Dragão do Mar, 230\nCentro, Fortaleza - CE, 60060-390",
-    'metalurgica' => "Rua Professor Vicente Silveira, 91\nParreão, Fortaleza - CE, 60410-322"
+// Estrutura de dados das empresas e tipos de assinatura (em ordem alfabética)
+$empresas = [
+    'afagu' => [
+        'nome' => 'Afagu',
+        'logo' => 'afagu.png',
+        'dominioEmail' => 'grupogda.com.br',
+        'corFonte' => '#246cb2', // Cor azul (mesma do Grupo Anjo da Guarda)
+        'tiposAssinatura' => [
+            'padrao' => [
+                'nome' => 'Padrão',
+                'imagemBase' => 'afagu.png'
+            ]
+        ]
+    ],
+    'cemiterio-anjo-guarda' => [
+        'nome' => 'Cemitério Anjo da Guarda',
+        'logo' => 'cepag.png',
+        'dominioEmail' => 'grupogda.com.br',
+        'corFonte' => '#14427d', // Cor teal-azul escuro
+        'tiposAssinatura' => [
+            'padrao' => [
+                'nome' => 'Padrão',
+                'imagemBase' => 'cepag.png'
+            ]
+        ]
+    ],
+    'grupo-anjo-guarda' => [
+        'nome' => 'Grupo Anjo da Guarda',
+        'logo' => 'logo-grupo.png',
+        'dominioEmail' => 'grupogda.com.br',
+        'corFonte' => '#246cb2', // Cor azul para as fontes
+        'tiposAssinatura' => [
+            'padrao' => [
+                'nome' => 'Padrão',
+                'imagemBase' => 'IMAGEM_BASE.png'
+            ]
+        ]
+    ],
+    'paz-eterna' => [
+        'nome' => 'Paz Eterna',
+        'logo' => 'pazeterna.png',
+        'dominioEmail' => 'grupogda.com.br',
+        'corFonte' => '#3e4095', // Cor azul escuro
+        'tiposAssinatura' => [
+            'padrao' => [
+                'nome' => 'Padrão',
+                'imagemBase' => 'pazeterna.png'
+            ]
+        ]
+    ]
 ];
 
-// Caminho para a imagem base e para o arquivo da fonte.
+// Caminho para o arquivo da fonte.
 // CERTIFIQUE-SE QUE ESSES ARQUIVOS ESTÃO NA MESMA PASTA!
-$imagemBase = 'IMAGEM_BASE.png';
 $arquivoFonte = 'Agrandir-Narrow.otf'; // Coloque o nome exato do seu arquivo de fonte.
 
 // --- PROCESSAMENTO DOS DADOS ---
 
 // Pega os dados enviados pelo formulário
+$empresaKey = $_POST['empresa'] ?? '';
+$tipoAssinaturaKey = $_POST['tipo-assinatura'] ?? '';
 $nome = strtoupper($_POST['nome']); // Deixa o nome em maiúsculo, como no exemplo
 $cargo = strtoupper($_POST['cargo']); // Deixa o cargo em maiúsculo
 $telefone = $_POST['telefone'];
 $email = $_POST['email'];
-$keyEscritorio = $_POST['escritorio'];
 
-// Pega o endereço correspondente no "banco de dados"
-$endereco = $enderecos[$keyEscritorio];
+// Validação
+if (!isset($empresas[$empresaKey])) {
+    die('Empresa não encontrada.');
+}
+
+$empresa = $empresas[$empresaKey];
+
+if (!isset($empresa['tiposAssinatura'][$tipoAssinaturaKey])) {
+    die('Tipo de assinatura não encontrado.');
+}
+
+$tipoAssinatura = $empresa['tiposAssinatura'][$tipoAssinaturaKey];
+
+// Pega a imagem base e cor da fonte correspondentes
+$imagemBase = $tipoAssinatura['imagemBase'];
+$corFonteHex = $empresa['corFonte'];
+
+// Função para converter cor hexadecimal para RGB
+function hex2rgb($hex) {
+    $hex = str_replace('#', '', $hex);
+    if (strlen($hex) == 3) {
+        $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+    }
+    $r = hexdec(substr($hex, 0, 2));
+    $g = hexdec(substr($hex, 2, 2));
+    $b = hexdec(substr($hex, 4, 2));
+    return [$r, $g, $b];
+}
 
 // --- GERAÇÃO DA IMAGEM ---
 
@@ -33,27 +104,58 @@ header('Content-Type: image/png');
 // Carrega a imagem base
 $img = imagecreatefrompng($imagemBase);
 
-// Define as cores que serão usadas (Branco e Azul Escuro da Urbmidia)
-$branco = imagecolorallocate($img, 255, 255, 255);
-$azulEscuro = imagecolorallocate($img, 0, 32, 96); // Cor estimada a partir do exemplo
+// Converte a cor hexadecimal para RGB e aloca a cor
+$rgb = hex2rgb($corFonteHex);
+$corTexto = imagecolorallocate($img, $rgb[0], $rgb[1], $rgb[2]);
+
+// Função para quebrar nome longo em múltiplas linhas
+function quebrarNomeLongo($fonte, $tamanhoFonte, $nome, $maxWidth) {
+    $palavras = explode(' ', $nome);
+    $linhas = [];
+    $linhaAtual = '';
+    
+    foreach ($palavras as $palavra) {
+        $testeLinha = $linhaAtual ? $linhaAtual . ' ' . $palavra : $palavra;
+        $bbox = imagettfbbox($tamanhoFonte, 0, $fonte, $testeLinha);
+        $largura = $bbox[4] - $bbox[0];
+        
+        if ($largura <= $maxWidth || empty($linhaAtual)) {
+            $linhaAtual = $testeLinha;
+        } else {
+            $linhas[] = $linhaAtual;
+            $linhaAtual = $palavra;
+        }
+    }
+    
+    if (!empty($linhaAtual)) {
+        $linhas[] = $linhaAtual;
+    }
+    
+    return empty($linhas) ? [$nome] : $linhas;
+}
 
 // Coordenadas e tamanhos (eixo X, eixo Y)
 // Estes valores podem precisar de pequenos ajustes para o alinhamento perfeito.
 
-// Escreve o NOME
-imagettftext($img, 30, 0, 40, 80, $branco, $arquivoFonte, $nome);
+// Escreve o NOME (com quebra de linha se necessário)
+$linhasNome = quebrarNomeLongo($arquivoFonte, 30, $nome, 400);
+$yNome = 80;
+foreach ($linhasNome as $linha) {
+    imagettftext($img, 30, 0, 40, $yNome, $corTexto, $arquivoFonte, $linha);
+    $yNome += 35; // Espaçamento entre linhas
+}
 
-// Escreve o CARGO
-imagettftext($img, 15, 0, 42, 115, $branco, $arquivoFonte, $cargo);
+// Escreve o CARGO (ajustado para aparecer abaixo do nome)
+$yCargo = 80 + (count($linhasNome) * 35) + 5;
+imagettftext($img, 15, 0, 42, $yCargo, $corTexto, $arquivoFonte, $cargo);
 
-// Escreve o TELEFONE
-imagettftext($img, 15, 0, 580, 80, $branco, $arquivoFonte, $telefone);
+// Escreve o TELEFONE (abaixo do cargo)
+$yTelefone = $yCargo + 20;
+imagettftext($img, 15, 0, 42, $yTelefone, $corTexto, $arquivoFonte, $telefone);
 
-// Escreve o E-MAIL
-imagettftext($img, 15, 0, 580, 115, $branco, $arquivoFonte, $email);
-
-// Escreve o ENDEREÇO
-imagettftext($img, 13, 0, 580, 240, $azulEscuro, $arquivoFonte, $endereco);
+// Escreve o E-MAIL (abaixo do telefone)
+$yEmail = $yTelefone + 18;
+imagettftext($img, 15, 0, 42, $yEmail, $corTexto, $arquivoFonte, $email);
 
 
 // Gera a imagem PNG final e a exibe no navegador

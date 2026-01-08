@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Assinatura - Urbmídia</title>
+    <title>Gerador de Assinatura - Grupo Anjo da Guarda</title>
     <style>
         /* Nome do arquivo da fonte e formato atualizados conforme solicitado. */
         @font-face {
@@ -28,7 +28,7 @@
             color: var(--text-color);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
@@ -38,24 +38,69 @@
 
         .container {
             width: 100%;
-            max-width: 600px;
-            text-align: center;
+            max-width: 1200px;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 20px;
         }
 
-        .logo {
-            max-width: 250px;
-            margin-bottom: 40px;
+        .form-section {
+            flex: 1;
+            min-width: 280px;
+            max-width: 480px;
+        }
+
+        .preview-section {
+            flex: 1;
+            min-width: 280px;
+            max-width: 480px;
+            position: sticky;
+            top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                flex-direction: column;
+                gap: 20px;
+                padding: 0;
+            }
+
+            .form-section,
+            .preview-section {
+                max-width: 100%;
+            }
+
+            .preview-section {
+                position: relative;
+                top: 0;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            margin-bottom: 40px;
+            margin-bottom: 10px;
+            color: var(--text-color);
         }
 
         .form-group {
             position: relative;
-            margin-bottom: 35px;
+            margin-bottom: 28px;
             text-align: left;
         }
 
@@ -73,15 +118,21 @@
             width: 100%;
             background: transparent;
             border: none;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
             color: var(--text-color);
             font-family: 'Agrandir', sans-serif;
             font-size: 16px;
-            padding: 25px 0 8px 0;
+            padding: 25px 0 10px 0;
             outline: none;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            border-bottom-color: #0594E6;
         }
 
         /* Corrige o fundo do autofill em navegadores WebKit (Chrome, Safari) */
@@ -113,30 +164,57 @@
             width: 100%;
             background-color: #0594E6;
             color: white;
-            padding: 15px;
+            padding: 16px;
             border: none;
-            border-radius: 30px;
+            border-radius: 8px;
             cursor: pointer;
             font-family: 'Agrandir', sans-serif;
             font-size: 16px;
             font-weight: bold;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px rgba(5, 148, 230, 0.3);
         }
 
         button:hover {
-            background-color: #034e79;
+            background-color: #0474b8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 148, 230, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         #result-container {
             display: none;
             text-align: center;
+            width: 100%;
+        }
+
+        .signature-preview-box {
+            background: rgba(0, 0, 0, 0.05);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         #signature-image {
             max-width: 100%;
-            border: 1px solid #444;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
         }
 
         #download-btn {
@@ -144,14 +222,152 @@
             text-decoration: none;
             background-color: #28a745;
             color: white;
-            padding: 12px 25px;
-            border-radius: 30px;
+            padding: 14px 28px;
+            border-radius: 8px;
             font-weight: bold;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
         }
 
         #download-btn:hover {
             background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        #voltar-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+        }
+
+        #voltar-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+        }
+
+        #preview-container {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        #preview-container h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        #preview-canvas {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .empty-preview {
+            padding: 50px 20px;
+            color: var(--label-color);
+            font-style: italic;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .tutorial-section {
+            margin-top: 50px;
+            padding: 35px;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .tutorial-section h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .tutorial-section h3 {
+            font-size: 18px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        .tutorial-section ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .tutorial-section li {
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .tutorial-section code {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #0594E6;
+        }
+
+        .tutorial-section .highlight {
+            background: rgba(5, 148, 230, 0.1);
+            padding: 20px;
+            border-left: 4px solid #0594E6;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .tutorial-section .step-number {
+            display: inline-block;
+            background: #0594E6;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .tutorial-section {
+                padding: 20px;
+            }
+
+            .tutorial-section h2 {
+                font-size: 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            #download-btn,
+            #voltar-btn {
+                width: 100%;
+            }
         }
 
         #status-message {
@@ -176,87 +392,400 @@
 <body>
 
     <div class="container">
-        <div id="form-container">
-            <img src="LOGOMARCA URBMIDIA.png" alt="Logomarca Urbmídia" class="logo">
-            <h1>Preencha os dados</h1>
-            <form id="signature-form">
-                <div class="form-group">
-                    <label for="nome">Seu nome</label>
-                    <input type="text" id="nome" name="nome" placeholder="Nome" required>
+        <div class="form-section">
+            <div id="form-container">
+                <h1>Gerador de Assinatura</h1>
+                <p style="color: var(--label-color); margin-bottom: 30px; font-size: 14px;">Preencha os dados abaixo para gerar sua assinatura</p>
+                <form id="signature-form">
+                    <div class="form-group">
+                        <label for="empresa">Empresa</label>
+                        <select id="empresa" name="empresa" required>
+                            <option value="">Selecione uma empresa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo-assinatura">Tipo de Assinatura</label>
+                        <select id="tipo-assinatura" name="tipo-assinatura" required disabled>
+                            <option value="">Selecione primeiro a empresa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nome">Seu nome</label>
+                        <input type="text" id="nome" name="nome" placeholder="Nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cargo">Cargo/Função</label>
+                        <input type="text" id="cargo" name="cargo" placeholder="ex: Gerente Comercial" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" placeholder="seueemail@exemplo.com.br" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">Telefone</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required
+                            oninput="this.value = this.value.replace(/[^0-9() \-]/g, '')">
+                    </div>
+                    <button type="submit">Gerar assinatura &rarr;</button>
+                </form>
+                <p id="status-message">Gerando sua assinatura, aguarde...</p>
+            </div>
+
+            <div id="result-container">
+                <h1>Sua assinatura está pronta! 🎉</h1>
+                
+                <div class="signature-preview-box">
+                    <img id="signature-image" src="" alt="Assinatura Gerada">
                 </div>
-                <div class="form-group">
-                    <label for="cargo">Seu departamento</label>
-                    <input type="text" id="cargo" name="cargo" placeholder="ex: Comercial" required>
+
+                <div class="action-buttons">
+                    <a id="download-btn" href="#" download="minha_assinatura.png">📥 Baixar Assinatura</a>
+                    <button type="button" id="voltar-btn">✏️ Voltar e Editar</button>
                 </div>
-                <div class="form-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" name="email" placeholder="seueemail@urbmidia.com.br" required>
+
+                <div class="tutorial-section">
+                    <h2>📧 Como Configurar sua Assinatura no Zimbra</h2>
+                    
+                    <div class="highlight">
+                        <strong>Importante:</strong> Após baixar sua assinatura, siga os passos abaixo para configurá-la no Zimbra.
+                    </div>
+
+                    <h3>Passo 1: Acessar as Configurações</h3>
+                    <ol>
+                        <li>Abra o Zimbra Web Client no seu navegador</li>
+                        <li>Faça login com suas credenciais</li>
+                        <li>Clique no ícone de <strong>Configurações</strong> (⚙️) no canto superior direito</li>
+                        <li>No menu lateral, clique em <strong>"Assinaturas"</strong> ou <strong>"Signatures"</strong></li>
+                    </ol>
+
+                    <h3>Passo 2: Criar Nova Assinatura</h3>
+                    <ol>
+                        <li>Clique no botão <strong>"Nova Assinatura"</strong> ou <strong>"New Signature"</strong></li>
+                        <li>Dê um nome para sua assinatura (ex: "Assinatura Padrão")</li>
+                        <li>Selecione o formato <strong>"HTML"</strong> ou <strong>"Rich Text"</strong></li>
+                    </ol>
+
+                    <h3>Passo 3: Inserir a Imagem da Assinatura</h3>
+                    <ol>
+                        <li>No editor de assinatura, clique no botão de <strong>"Inserir Imagem"</strong> 📷</li>
+                        <li>Clique em <strong>"Escolher arquivo"</strong> ou <strong>"Upload"</strong></li>
+                        <li>Selecione o arquivo da assinatura que você acabou de baixar</li>
+                        <li>Aguarde o upload da imagem</li>
+                        <li>A imagem será inserida automaticamente no editor</li>
+                    </ol>
+
+                    <h3>Passo 4: Configurar a Assinatura Padrão</h3>
+                    <ol>
+                        <li>Marque a opção <strong>"Usar como assinatura padrão"</strong> ou <strong>"Set as default"</strong></li>
+                        <li>Selecione em quais contas de e-mail a assinatura será usada</li>
+                        <li>Clique em <strong>"Salvar"</strong> ou <strong>"Save"</strong></li>
+                    </ol>
+
+                    <h3>Passo 5: Testar a Assinatura</h3>
+                    <ol>
+                        <li>Clique em <strong>"Nova Mensagem"</strong> ou <strong>"Compose"</strong></li>
+                        <li>Verifique se a assinatura aparece automaticamente no rodapé do e-mail</li>
+                        <li>Se necessário, você pode ajustar o tamanho da imagem nas configurações</li>
+                    </ol>
+
+                    <div class="highlight">
+                        <strong>💡 Dica:</strong> Se a assinatura não aparecer automaticamente, verifique se a opção "Inserir assinatura automaticamente" está ativada nas configurações de e-mail.
+                    </div>
+
+                    <h3>Alternativa: Usar HTML Direto</h3>
+                    <p>Se preferir, você pode inserir a assinatura usando código HTML:</p>
+                    <ol>
+                        <li>No editor de assinatura, clique em <strong>"HTML"</strong> ou <strong>"Source"</strong></li>
+                        <li>Cole o seguinte código (substitua o caminho pela URL da sua imagem):</li>
+                    </ol>
+                    <div class="highlight">
+                        <code>&lt;img src="caminho/para/sua/assinatura.png" alt="Assinatura" style="max-width: 100%; height: auto;"&gt;</code>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="telefone">Telefone</label>
-                    <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required
-                        oninput="this.value = this.value.replace(/[^0-9() \-]/g, '')">
-                </div>
-                <div class="form-group">
-                    <label for="escritorio">Escritório</label>
-                    <select id="escritorio" name="escritorio" required>
-                        <option value="uno" selected>Escritório Uno Medical e Office</option>
-                        <option value="co">CENTRO DE OPERAÇÕES (C.O.)</option>
-                        <option value="metalurgica">Metalúrgica</option>
-                    </select>
-                </div>
-                <button type="submit">Gerar assinatura &rarr;</button>
-            </form>
-            <p id="status-message">Gerando sua assinatura, aguarde...</p>
+            </div>
         </div>
 
-        <div id="result-container">
-            <h1>Sua assinatura :D</h1>
-            <img id="signature-image" src="" alt="Assinatura Gerada">
-            <a id="download-btn" href="#" download="minha_assinatura_urbmidia.png">Download</a>
+        <div class="preview-section">
+            <div id="preview-container">
+                <h2>Preview da Assinatura</h2>
+                <div id="empty-preview" class="empty-preview">
+                    Selecione uma empresa e preencha os dados para ver o preview
+                </div>
+                <canvas id="preview-canvas" style="display: none;"></canvas>
+            </div>
         </div>
     </div>
 
-    <!-- O Canvas fica escondido, ele é usado apenas para desenhar a imagem -->
+    <!-- O Canvas fica escondido, ele é usado apenas para desenhar a imagem final -->
     <canvas id="signature-canvas" style="display: none;"></canvas>
 
     <script>
-        const enderecos = {
-            'uno': "Av. Pontes Vieira, 2340\nUNO | Medical & Office\nSala 915 - Dionísio Torres, Fortaleza-CE",
-            'co': "R. Dragão do Mar, 230\nCentro, Fortaleza - CE, 60060-390",
-            'metalurgica': "Rua Professor Vicente Silveira, 91\nParreão, Fortaleza - CE, 60410-322"
+        // Estrutura de dados das empresas e tipos de assinatura (em ordem alfabética)
+        const empresas = {
+            'afagu': {
+                nome: 'Afagu',
+                logo: 'afagu.png',
+                dominioEmail: 'grupogda.com.br',
+                corFonte: '#246cb2', // Cor azul (mesma do Grupo Anjo da Guarda)
+                tiposAssinatura: {
+                    'padrao': {
+                        nome: 'Padrão',
+                        imagemBase: 'afagu.png'
+                    }
+                }
+            },
+            'cemiterio-anjo-guarda': {
+                nome: 'Cemitério Anjo da Guarda',
+                logo: 'cepag.png',
+                dominioEmail: 'grupogda.com.br',
+                corFonte: '#14427d', // Cor teal-azul escuro
+                tiposAssinatura: {
+                    'padrao': {
+                        nome: 'Padrão',
+                        imagemBase: 'cepag.png'
+                    }
+                }
+            },
+            'grupo-anjo-guarda': {
+                nome: 'Grupo Anjo da Guarda',
+                logo: 'logo-grupo.png',
+                dominioEmail: 'grupogda.com.br',
+                corFonte: '#246cb2', // Cor azul para as fontes
+                tiposAssinatura: {
+                    'padrao': {
+                        nome: 'Padrão',
+                        imagemBase: 'grupoanjodaguarda.png'
+                    }
+                }
+            },
+            'paz-eterna': {
+                nome: 'Paz Eterna',
+                logo: 'pazeterna.png',
+                dominioEmail: 'grupogda.com.br',
+                corFonte: '#3e4095', // Cor azul escuro
+                tiposAssinatura: {
+                    'padrao': {
+                        nome: 'Padrão',
+                        imagemBase: 'pazeterna.png'
+                    }
+                }
+            }
         };
 
         const form = document.getElementById('signature-form');
         const canvas = document.getElementById('signature-canvas');
         const ctx = canvas.getContext('2d');
+        const previewCanvas = document.getElementById('preview-canvas');
+        const previewCtx = previewCanvas.getContext('2d');
 
         const formContainer = document.getElementById('form-container');
         const resultContainer = document.getElementById('result-container');
         const statusMessage = document.getElementById('status-message');
+        const empresaSelect = document.getElementById('empresa');
+        const tipoAssinaturaSelect = document.getElementById('tipo-assinatura');
+
+        let empresaAtual = null;
+        let tipoAssinaturaAtual = null;
+        let previewImageBase = null;
+
+        // Preenche o select de empresas
+        function popularEmpresas() {
+            Object.keys(empresas).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = empresas[key].nome;
+                empresaSelect.appendChild(option);
+            });
+        }
+
+        // Atualiza os tipos de assinatura quando uma empresa é selecionada
+        empresaSelect.addEventListener('change', function() {
+            const empresaKey = this.value;
+            empresaAtual = empresas[empresaKey];
+            
+            tipoAssinaturaSelect.innerHTML = '<option value="">Selecione um tipo</option>';
+            tipoAssinaturaSelect.disabled = !empresaKey;
+
+            if (empresaAtual) {
+                // Preenche tipos de assinatura
+                Object.keys(empresaAtual.tiposAssinatura).forEach(key => {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = empresaAtual.tiposAssinatura[key].nome;
+                    tipoAssinaturaSelect.appendChild(option);
+                });
+
+                // Atualiza placeholder do email
+                const emailInput = document.getElementById('email');
+                emailInput.placeholder = `seueemail@${empresaAtual.dominioEmail}`;
+            }
+
+            atualizarPreview();
+        });
+
+        // Carrega a imagem base quando um tipo de assinatura é selecionado
+        tipoAssinaturaSelect.addEventListener('change', function() {
+            const tipoKey = this.value;
+            tipoAssinaturaAtual = empresaAtual?.tiposAssinatura[tipoKey];
+
+            if (tipoAssinaturaAtual) {
+                // Carrega a imagem base para preview
+                loadImage(tipoAssinaturaAtual.imagemBase).then(img => {
+                    previewImageBase = img;
+                    previewCanvas.width = img.width;
+                    previewCanvas.height = img.height;
+                    atualizarPreview();
+                });
+            }
+
+            atualizarPreview();
+        });
+
+        // Adiciona listeners para atualizar preview em tempo real
+        ['nome', 'cargo', 'email', 'telefone'].forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            field.addEventListener('input', atualizarPreview);
+            field.addEventListener('change', atualizarPreview);
+        });
 
         // Função auxiliar para carregar uma imagem usando Promises (para async/await)
         function loadImage(src) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
+                
+                // Para servidores HTTP, define crossOrigin para evitar problemas de CORS
+                if (window.location.protocol !== 'file:') {
+                    img.crossOrigin = "anonymous";
+                }
+                
                 img.onload = () => resolve(img);
-                img.onerror = () => reject(new Error(`Falha ao carregar a imagem: ${src}. Verifique se o arquivo está na pasta correta.`));
+                img.onerror = () => {
+                    // Se falhar com crossOrigin, tenta sem
+                    if (img.crossOrigin) {
+                        const img2 = new Image();
+                        img2.onload = () => resolve(img2);
+                        img2.onerror = () => reject(new Error(`Falha ao carregar a imagem: ${src}. Verifique se o arquivo está na pasta correta.`));
+                        img2.src = src;
+                    } else {
+                        reject(new Error(`Falha ao carregar a imagem: ${src}. Verifique se o arquivo está na pasta correta.`));
+                    }
+                };
                 img.src = src;
             });
         }
 
         // Função auxiliar para desenhar texto com múltiplas linhas
-        function drawMultilineText(text, x, y) {
+        function drawMultilineText(context, text, x, y, lineHeight = 18) {
             const lines = text.split('\n');
-            const lineHeight = 18; // Espaçamento fixo entre as linhas
             lines.forEach((line, index) => {
-                ctx.fillText(line.trim(), x, y + (index * lineHeight));
+                context.fillText(line.trim(), x, y + (index * lineHeight));
             });
+        }
+
+        // Função para quebrar nome longo em múltiplas linhas
+        function quebrarNomeLongo(context, nome, maxWidth, fontSize) {
+            context.font = `bold ${fontSize}px 'Agrandir'`;
+            const palavras = nome.split(' ');
+            const linhas = [];
+            let linhaAtual = '';
+
+            for (let i = 0; i < palavras.length; i++) {
+                const palavra = palavras[i];
+                const testeLinha = linhaAtual ? linhaAtual + ' ' + palavra : palavra;
+                const largura = context.measureText(testeLinha).width;
+
+                if (largura <= maxWidth || !linhaAtual) {
+                    linhaAtual = testeLinha;
+                } else {
+                    linhas.push(linhaAtual);
+                    linhaAtual = palavra;
+                }
+            }
+
+            if (linhaAtual) {
+                linhas.push(linhaAtual);
+            }
+
+            return linhas.length > 0 ? linhas : [nome];
+        }
+
+        // Função para atualizar o preview em tempo real
+        async function atualizarPreview() {
+            const emptyPreview = document.getElementById('empty-preview');
+            
+            if (!empresaAtual || !tipoAssinaturaAtual || !previewImageBase) {
+                previewCanvas.style.display = 'none';
+                emptyPreview.style.display = 'block';
+                return;
+            }
+
+            const nome = document.getElementById('nome').value.trim();
+            const cargo = document.getElementById('cargo').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+
+            // Se não houver dados suficientes, mostra mensagem
+            if (!nome && !cargo && !email && !telefone) {
+                previewCanvas.style.display = 'none';
+                emptyPreview.style.display = 'block';
+                return;
+            }
+
+            emptyPreview.style.display = 'none';
+            previewCanvas.style.display = 'block';
+
+            const nomeTexto = nome ? nome.toUpperCase() : 'SEU NOME';
+            const cargoTexto = cargo ? cargo.toUpperCase() : 'SEU CARGO';
+            const emailTexto = email || 'email@exemplo.com';
+            const telefoneTexto = telefone || '(XX) XXXXX-XXXX';
+
+            try {
+                // Desenha a imagem base
+                previewCtx.drawImage(previewImageBase, 0, 0);
+
+                // Carrega a fonte
+                await document.fonts.load("bold 35px 'Agrandir'");
+                await document.fonts.load("normal 17px 'Agrandir'");
+                await document.fonts.load("normal 16px 'Agrandir'");
+
+                // Define a cor para os textos (cor específica da empresa)
+                previewCtx.fillStyle = empresaAtual.corFonte;
+
+                // NOME (com quebra de linha se necessário)
+                previewCtx.font = "bold 35px 'Agrandir'";
+                const linhasNome = quebrarNomeLongo(previewCtx, nomeTexto, 400, 35);
+                linhasNome.forEach((linha, index) => {
+                    previewCtx.fillText(linha, 40, 65 + (index * 35));
+                });
+
+                // CARGO (ajustado para aparecer abaixo do nome)
+                previewCtx.font = "normal 17px 'Agrandir'";
+                const yCargo = 65 + (linhasNome.length * 35) + 5;
+                previewCtx.fillText(cargoTexto, 42, yCargo);
+
+                // TELEFONE (abaixo do cargo)
+                previewCtx.font = "normal 16px 'Agrandir'";
+                const yTelefone = yCargo + 20;
+                previewCtx.fillText(telefoneTexto, 42, yTelefone);
+
+                // E-MAIL (abaixo do telefone)
+                const yEmail = yTelefone + 18;
+                previewCtx.fillText(emailTexto, 42, yEmail);
+            } catch (error) {
+                console.error("Erro ao atualizar preview:", error);
+            }
         }
 
         // Torna a função do evento 'submit' assíncrona para usar 'await'
         form.addEventListener('submit', async function (event) {
             event.preventDefault();
+
+            if (!empresaAtual || !tipoAssinaturaAtual) {
+                statusMessage.textContent = 'Por favor, selecione uma empresa e tipo de assinatura.';
+                statusMessage.style.color = '#e8491d';
+                statusMessage.style.display = 'block';
+                return;
+            }
 
             const emailInput = document.getElementById('email');
             let emailValue = emailInput.value;
@@ -265,15 +794,15 @@
             // Validação e correção automática do e-mail
             if (atIndex === -1) {
                 statusMessage.textContent = 'Por favor, insira um endereço de e-mail válido.';
-                statusMessage.style.color = '#e8491d'; // Cor de erro
+                statusMessage.style.color = '#e8491d';
                 statusMessage.style.display = 'block';
                 emailInput.focus();
                 return;
             }
 
-            // Pega a parte antes do @ e anexa o domínio correto
+            // Pega a parte antes do @ e anexa o domínio correto da empresa
             const localPart = emailValue.substring(0, atIndex);
-            const correctedEmail = localPart + '@urbmidia.com.br';
+            const correctedEmail = localPart + '@' + empresaAtual.dominioEmail;
 
             // Atualiza o campo no formulário para o usuário ver a correção
             emailInput.value = correctedEmail;
@@ -294,46 +823,54 @@
                 const cargo = document.getElementById('cargo').value.toUpperCase();
                 const email = document.getElementById('email').value;
                 const telefone = document.getElementById('telefone').value;
-                const keyEscritorio = document.getElementById('escritorio').value;
-                const endereco = enderecos[keyEscritorio];
 
-                const baseImage = await loadImage('IMAGEM_BASE.png');
+                const baseImage = await loadImage(tipoAssinaturaAtual.imagemBase);
 
-                // Define a resolução do canvas para a mesma da imagem base (750x312)
+                // Define a resolução do canvas para a mesma da imagem base
                 canvas.width = baseImage.width;
                 canvas.height = baseImage.height;
 
                 ctx.drawImage(baseImage, 0, 0);
 
-                // --- POSIÇÕES E CORES FIXAS ---
+                // Define a cor para os textos (cor específica da empresa)
+                ctx.fillStyle = empresaAtual.corFonte;
 
-                // Define a cor para os textos da parte superior (branca)
-                ctx.fillStyle = '#FFFFFF';
-
-                // NOME
+                // NOME (com quebra de linha se necessário)
                 ctx.font = "bold 35px 'Agrandir'";
-                ctx.fillText(nome, 40, 65);
+                const linhasNome = quebrarNomeLongo(ctx, nome, 400, 35);
+                linhasNome.forEach((linha, index) => {
+                    ctx.fillText(linha, 40, 65 + (index * 35));
+                });
 
-                // CARGO
+                // CARGO (ajustado para aparecer abaixo do nome)
                 ctx.font = "normal 17px 'Agrandir'";
-                ctx.fillText(cargo, 42, 90);
+                const yCargo = 65 + (linhasNome.length * 35) + 5;
+                ctx.fillText(cargo, 42, yCargo);
 
-                // TELEFONE
+                // TELEFONE (abaixo do cargo)
                 ctx.font = "normal 16px 'Agrandir'";
-                ctx.fillText(telefone, 460, 50);
+                const yTelefone = yCargo + 20;
+                ctx.fillText(telefone, 42, yTelefone);
 
-                // E-MAIL
-                ctx.fillText(email, 460, 70);
-
-                // ENDEREÇO
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = "normal 16px 'Agrandir'";
-                drawMultilineText(endereco, 460, 240);
+                // E-MAIL (abaixo do telefone)
+                const yEmail = yTelefone + 18;
+                ctx.fillText(email, 42, yEmail);
 
                 // Converte o canvas para uma imagem e mostra o resultado
-                const finalImageURL = canvas.toDataURL('image/png');
+                let finalImageURL;
+                try {
+                    finalImageURL = canvas.toDataURL('image/png');
+                } catch (corsError) {
+                    // Se houver erro de CORS, tenta uma solução alternativa
+                    if (corsError.name === 'SecurityError' || corsError.message.includes('tainted')) {
+                        throw new Error('Erro de segurança: O canvas está contaminado. Isso geralmente acontece quando você abre o arquivo diretamente (file://). Por favor, use um servidor HTTP local (como Live Server no VS Code ou Python: python -m http.server).');
+                    }
+                    throw corsError;
+                }
+                
                 document.getElementById('signature-image').src = finalImageURL;
                 document.getElementById('download-btn').href = finalImageURL;
+                document.getElementById('download-btn').download = `assinatura_${empresaAtual.nome.toLowerCase().replace(/\s+/g, '_')}.png`;
 
                 // Esconde o formulário e mostra a imagem gerada
                 formContainer.style.display = 'none';
@@ -341,11 +878,55 @@
 
             } catch (error) {
                 console.error("Erro ao gerar assinatura:", error);
-                statusMessage.textContent = error.message || 'Ocorreu um erro. Verifique se todos os arquivos (imagens, fonte) estão na pasta correta.';
+                let errorMessage = error.message || 'Ocorreu um erro. Verifique se todos os arquivos (imagens, fonte) estão na pasta correta.';
+                
+                // Mensagem mais amigável para erro de CORS
+                if (error.message && (error.message.includes('tainted') || error.message.includes('SecurityError') || error.message.includes('contaminado'))) {
+                    const isFileProtocol = window.location.protocol === 'file:';
+                    if (isFileProtocol) {
+                        errorMessage = '⚠️ ERRO: Arquivo aberto diretamente (file://)\n\n' +
+                            'Navegadores modernos bloqueiam a exportação de imagens quando o arquivo é aberto diretamente.\n\n' +
+                            '✅ SOLUÇÃO: Use um servidor HTTP local\n\n' +
+                            'Opções rápidas:\n' +
+                            '1. VS Code: Instale a extensão "Live Server" e clique em "Go Live"\n' +
+                            '2. Python: Abra o terminal na pasta do projeto e execute:\n   python -m http.server 8000\n   Depois acesse: http://localhost:8000\n' +
+                            '3. Node.js: Execute: npx http-server\n' +
+                            '4. PHP: Execute: php -S localhost:8000\n\n' +
+                            'Depois de iniciar o servidor, acesse o arquivo através de http://localhost:8000';
+                    } else {
+                        errorMessage = '⚠️ Erro de segurança ao exportar a imagem.\n\n' +
+                            'Verifique se as imagens estão no mesmo domínio ou se o servidor permite CORS.';
+                    }
+                }
+                
+                statusMessage.textContent = errorMessage;
                 statusMessage.style.color = '#e8491d';
+                statusMessage.style.whiteSpace = 'pre-line';
+                statusMessage.style.display = 'block';
                 form.querySelector('button').style.display = 'block';
             }
         });
+
+        // Botão para voltar ao formulário
+        document.getElementById('voltar-btn')?.addEventListener('click', function() {
+            formContainer.style.display = 'block';
+            resultContainer.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Verifica se está usando file:// e mostra aviso
+        if (window.location.protocol === 'file:') {
+            const warningDiv = document.createElement('div');
+            warningDiv.style.cssText = 'background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #856404;';
+            warningDiv.innerHTML = '<strong>⚠️ Aviso:</strong> Este arquivo está sendo aberto diretamente (file://). ' +
+                'Para funcionar corretamente, use um servidor HTTP local. ' +
+                '<br><br><strong>Opções:</strong> Live Server (VS Code), Python (python -m http.server), ou Node.js (npx http-server)';
+            const formContainer = document.getElementById('form-container');
+            formContainer.insertBefore(warningDiv, formContainer.firstChild);
+        }
+
+        // Inicializa o sistema
+        popularEmpresas();
     </script>
 
 </body>
